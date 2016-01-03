@@ -2,6 +2,10 @@
 
 ##概要
 関西学院大学神戸三田キャンパス周辺の3停留所から出発するバスの発車時刻・行き先をリアルタイムに表示するサービスです。
+現在、以下のURLで運用しています。
+<http://karakuri-do.sakura.ne.jp/tokky/exodusKSC.html>
+
+![Exodus KSC](http://karakuri-do.sakura.ne.jp/tokky/exodus.png)
 
 ##制作時期
 2014年2月〜
