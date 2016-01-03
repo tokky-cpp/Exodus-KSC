@@ -6,7 +6,9 @@
 現在、以下のURLで運用しています。
 <http://karakuri-do.sakura.ne.jp/tokky/exodusKSC.html>
 
+<div style="text-align: center;">
 <img src="http://karakuri-do.sakura.ne.jp/tokky/exodus.png" align="center">
+</div>
 
 ##制作時期
 2014年2月〜
