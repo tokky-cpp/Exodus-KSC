@@ -1,0 +1,692 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<head>
+<!--todo
+コードを読みやすくする
+・三項演算子使ってきれいにする
+・系統行き先を直接書くのをやめて配列にぶちこんできれいにする
+
+//シャトルバスのやつをなんとかする->多分解決(2014-5-17)
+時間取得2回してるので1回に統一させる
+
+スマホアプリ化->オフラインで見たい(三田は電波はいりづらいところが多いから)
+(2014-4-20)
+
+
+祝日対応なんとかする
+単に祝日の場合と授業日の臨時があるのでややこしい
+(2014-5-17)
+
+2015-10-1変更点
+19時20分以降発三田駅行き、全便フラワータウン経由に
+4限後新三田駅行き、Link,急行,LinkからLink,Link,急行に
+休日三田駅行き19:30増便
+
+-->
+<title>Exodus KSC</title>
+<link rel="apple-touch-icon-precomposed" href="icon-bus.png"><!--iOSホーム画面画像追加！(2014-4-20) iOSだけじゃなくてAndroidでもアイコン表示されてるみたい(2014-5-17)-->
+<meta http-equiv="Content-Type" content="text/html; charset=shift_jis">
+<meta name="viewport" content="width=device-width"><!--, initial-scale=1, maximum-scale=1">--><!--拡大できるかとか設定-->
+<meta name="description" content="関西学院神戸三田キャンパス前発のバス発車時刻お知らせ！">
+<meta name="keywords" content="KSC,関西学院大学,関西学院,神姫バス,ロータリー,三田,神戸三田,神戸三田キャンパス,バス,関西学院大学神戸三田キャンパス,関西学院神戸三田キャンパス">
+<link rel="shortcut icon" href="http://karakuri-do.sakura.ne.jp/tokky/favicon.ico" type="image/vnd.microsoft.icon">
+<link rel="icon" href="http://karakuri-do.sakura.ne.jp/tokky/favicon.ico" type="image/vnd.microsoft.icon">
+
+<script laguage="JavaScript"><!--//リロード用
+function changeImg()
+{
+　　　　location.reload();
+}
+// -->
+</script>
+
+
+<script type="text/javascript">
+<!--
+//---時刻表データ--------------------------------------------------------------------
+//新三田駅行き平日授業日
+shin=new Array(813,858,1037,1337,1510,1513,1516,1519,1525,1533,1550,1558,1638,1643,1648,1651,1654,1657,1702,1706,1736,1814,1820,1828,1832,1836,1842,1853,1908,1935,2004,2025,2112,2142,2204);//34本
+shinA=new Array(0,0,0,0,2,3,0,1,0,1,1,1,0,0,2,3,0,1,0,1,1,0,0,3,0,1,1,1,1,1,1,1,1,1,1);//0:センチュリープラザ 1:南WT駅 2:連接KG Link(直行) 3:KG Link(通常バス)
+
+//新三田駅行き平日休講日
+shinKyu=new Array(813,858,1037,1337,1519,1550,1558,1657,1706,1736,1836,1842,1853,1908,1935,2004,2025,2112,2142,2204);
+shinAKyu=new Array(0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
+
+
+//新三田駅行き休日
+shinHol=new Array(0,1038);
+shinAHol=new Array(0,0);
+
+
+/*
+//新三田駅行き休日祝日用！！！！！
+shinHol=new Array(0,1037,1515,1655,1840);
+shinAHol=new Array(0,0,1,1,1);//1:臨時Link
+*/
+
+
+//三田駅行き平日授業日
+sanda=new Array(1040,1140,1310,1410,1440,1510,1515,1540,1545,1600,1630,1650,1700,1710,1740,1755,1810,1825,1830,1835,1845,1900,1920,1950,2020,2050,2120,2220);
+sandaA=new Array(0,1,0,0,0,1,3,0,2,3,3,1,3,3,3,2,3,0,0,3,3,3,3,3,3,3,3,3);//0:三田駅 1:連節三田 2:フラワータウン,富士が丘6丁目 3:フラワータウン、三田駅
+
+//三田駅行き平日休講日
+sandaKyu=new Array(1310,1440,1515,1540,1545,1600,1630,1700,1710,1740,1755,1810,1825,1835,1845,1900,1920);
+sandaAKyu=new Array(0,0,3,0,2,3,3,3,3,3,2,3,3,3,3,3,0);//0:三田駅 2:フラワータウン,富士が丘6丁目 3:フラワータウン、三田駅
+
+
+//三田駅行き休日
+sandaHol=new Array(1300,1520,1700,1730,1835,1930);
+sandaAHol=new Array(2,2,2,2,2,2);//0:三田駅 2:フラワータウン,富士が丘6丁目
+
+
+
+/*//三田駅行き休日//祝日用！！！！
+sandaHol=new Array(1300,1520,1700,1730,1835,1840);
+sandaAHol=new Array(2,2,2,2,2,0);//0:(臨時)三田駅 2:フラワータウン,富士が丘6丁目
+*/
+
+//三ノ宮行き平日
+san=new Array(1335,1510,1515,1517,1552,1650,1655,1657,1727,1830,1835,1837,1907,1937,2015,2040,2115,2140,2210);
+sanA=new Array(0,0,0,1,1,0,0,1,1,0,0,1,1,1,1,1,1,1,1);//0:関学エクスプレス、1:特急
+
+
+//三ノ宮行き休日
+sanHol=new Array(1553,1728);
+sanAHol=new Array(1,1);//0:関学エクスプレス、1:特急
+
+
+
+/*//三ノ宮行き休日祝日用！！！！
+sanHol=new Array(1515,1553,1655,1728,1835);
+sanAHol=new Array(0,1,0,1,0);//0:(臨時)関学エクスプレス、1:特急
+*/
+
+
+//つつじヶ丘北口行き平日
+tsutsuji=new Array(1129,1229,1429,1629,1700,1705,1831);
+tsutsujiA=new Array(0,1,0,0,2,0,0); //2 Amuse Line
+
+//つつじヶ丘北口行き休日
+tsutsujiHol=new Array(1228,1628);
+
+//シャトルバス
+shuttle=new Array(930,1120,1340,1520,1700,1840);
+//---------時刻表データ終わり--------------------------------------------------------------
+// --></script>
+
+
+
+</head>
+
+
+
+<body>
+<center>
+<h1>Exodus KSC</h1>
+
+
+<script laguage="JavaScript"><!--
+	//日時取得
+	myTbl = new Array("日","月","火","水","木","金","土");
+	myD = new Date();
+	 
+	myYear = myD.getFullYear();
+	myMonth = myD.getMonth() + 1;
+	myDate = myD.getDate();
+	myDay = myD.getDay();
+	myHours = myD.getHours();
+	myMinutes = myD.getMinutes();
+	mySeconds = myD.getSeconds();
+	
+	myMess1 = myYear + "年" + myMonth + "月" + myDate + "日";
+	myMess2 = "("+myTbl[myDay]+")";
+
+	urlPala = myYear+myMonth+myDate;
+	document.write(myMess1+myMess2+"<br>");//日付表示
+
+
+	window.onload = function(){
+		myClock.time();
+		setInterval("myClock.time()", 100);//100ミリ秒ごとに表示きりかえ
+		setInterval("changeImg()",1000*180);//180秒ごとにリロード
+	}
+	
+	var myClock = {
+		time : function(){
+			var dateObj = new Date();
+			var h = dateObj.getHours();
+			var m = dateObj.getMinutes();
+			var s = dateObj.getSeconds();
+			//時刻表示(リアルタイム)
+			document.getElementById("currentTime").innerHTML = "<font size=6>"+h+"時"+m+"分</font>"+s+"秒";	//now time
+		}
+	}
+
+
+// --></script>
+
+<span id="currentTime"></span>
+
+
+
+
+
+<script type="text/javascript">
+<!--
+	nowTime=myHours*100+myMinutes;//現在時刻をhhmmの書式で4桁の数字にしてしまう
+
+	today=myMonth*100+myDate;//今日の月日をmmddで4桁にする
+	
+//テスト用データ
+/*
+nowTime=1643;
+today=1004;
+//kyu=0;
+kyu=1;
+weekday=0;
+*/
+	if((today>=1224||today<=105))kyu=1;//12月24日から1月5日なら休講日なので1
+	else kyu=0;//休講日でなければ0
+
+	if(myDay>=1&&myDay<=5)weekday=1;//平日なら1
+	else weekday=0;//休日なら0
+	if(today==1123||today==1223||today>=1230||today<=103)weekday=0;//祝日
+	
+	//年末年始ダイヤ未対応
+
+
+
+	document.write( "<br>" );
+	if(today==1123||today==1223){//祝日授業日
+	document.write("<font size=5 color=red>本日は祝日ダイヤです！<br></font>臨時便対応しています。<br>");
+		document.write( "土休祝+<font color=red>臨時</font>ダイヤ<br>" );
+		}
+	else if(weekday==0)document.write( "土休祝ダイヤ<br>" );
+	else if(kyu==1)document.write( "平日 休講日ダイヤ<br>" );
+	else document.write( "平日ダイヤ<br>" );
+
+//nowTime=1700;
+
+// --></script>
+
+<img src=image/ksc.png><br>
+
+<table>
+<!-- --------------------------時刻表示本体------------------------------- -->
+	
+	
+	<tr>
+		<td style="background-color: #fd4;">
+			<font size=5 color=white>
+			
+			<script type="text/javascript">
+		<!--	
+				document.write("<a href=\"");
+				url_san="http://time.jr-odekake.net/cgi-bin/mydia.cgi?MODE=11&FUNC=0&EKI=%E4%B8%89%E3%83%8E%E5%AE%AE&SENK=%EF%BC%AA%EF%BC%B2%E7%A5%9E%E6%88%B8%E7%B7%9A&DIR=%E8%A5%BF%E6%98%8E%E7%9F%B3%E3%83%BB%E5%A7%AB%E8%B7%AF%E6%96%B9%E9%9D%A2&DDIV=&CDAY=&DITD=2807012040100%2c2807012040110%2c2807012040400%2c2807012040410&COMPANY_CODE=4&DATE="
+				document.write(url_san+urlPala);	
+				document.write("\" style=\"color:white; text-decoration: none;\">");
+			
+		-->	
+			</script>
+			
+			
+			1</a></font>
+		</td>
+		
+		<td style="background-color: black;"><font color=#fff>
+			<script type="text/javascript">
+//--------------------------1三ノ宮-------------------------------------------------------
+				<!--
+					flg=0;//表示するバスが無ければ最後にないことを表示するためのフラグ
+					if(weekday==0){//休日の場合
+						for(i=0;i<sanHol.length;i++){//入力時刻をはじめから走査
+							if(nowTime<sanHol[i]){
+								document.write( "先発　" );
+								document.write( Math.floor(sanHol[i]/100)+':');//時間を表示
+								if(sanHol[i]%100<10)document.write(0);//もし分が1桁だったら0を表示する
+								document.write(sanHol[i]%100 );//分を表示
+								if(sanAHol[i]==0)document.write("　<font color=red>臨時</font> 関学ｴｸｽﾌﾟﾚｽ");//系統表示
+								else document.write("　特急");
+								document.write(" <font size=2>新神戸駅</font> 三宮<br>");//行き先表示
+									if(i+1<sanHol.length){//まだバスがあれば
+										document.write( "次発　" );
+										document.write( Math.floor(sanHol[i+1]/100)+':');
+										if(sanHol[i+1]%100<10)document.write(0);
+										document.write(sanHol[i+1]%100 );
+										if(sanAHol[i+1]==0)document.write("　<font color=red>臨時</font> 関学ｴｸｽﾌﾟﾚｽ");
+										else document.write("　特急");
+										document.write(" <font size=2>新神戸駅</font> 三宮");
+									}
+									else document.write("-");//バスが無ければ
+								flg=1;//バスがあったので1にする
+								break;
+							}
+						}
+					}
+
+					else{//平日ダイヤの場合
+						for(i=0;i<san.length;i++){
+							if(nowTime<san[i]){
+								document.write( "先発　" );
+								document.write( Math.floor(san[i]/100)+':');
+								if(san[i]%100<10)document.write(0);
+								document.write(san[i]%100 );
+								if(sanA[i]==0)document.write("　関学ｴｸｽﾌﾟﾚｽ");
+								else document.write("　特急");
+								document.write(" <font size=2>新神戸駅</font> 三宮<br>");
+									if(i+1<san.length){
+										document.write( "次発　" );
+										document.write( Math.floor(san[i+1]/100)+':');
+										if(san[i+1]%100<10)document.write(0);
+										document.write(san[i+1]%100 );
+										if(sanA[i+1]==0)document.write("　関学ｴｸｽﾌﾟﾚｽ");
+										else document.write("　特急");
+										document.write(" <font size=2>新神戸駅</font> 三宮");
+									}
+									else document.write("-");
+								flg=1; 
+								break;
+							}
+						}
+					}
+
+
+if(flg==0)document.write( "<font size=2>三宮</font><font size=1>行き、本日の運行は終了しました。</font>" );
+//--------------------三ノ宮ここまで---------------------------------------------------------------------
+// -->
+			</script>
+			</font>
+		</td>
+	</tr>
+
+
+
+
+
+	<tr>
+	
+		
+		<td style="background-color: #f00;">
+			<font size=5 color=white>
+			
+				
+			<script type="text/javascript">
+		<!--	
+				document.write("<a href=\"");
+				url_shin="http://time.jr-odekake.net/cgi-bin/mydia.cgi?MODE=11&FUNC=0&EKI=%E6%96%B0%E4%B8%89%E7%94%B0&SENK=%EF%BC%AA%EF%BC%B2%E5%AE%9D%E5%A1%9A%E7%B7%9A&DIR=%E4%B8%89%E7%94%B0%E3%83%BB%E5%AE%9D%E5%A1%9A%E6%96%B9%E9%9D%A2&DDIV=&CDAY=&DITD=2833025060100%2c2833025060110%2c2833025060400%2c2833025060410&COMPANY_CODE=4&DATE=";
+				document.write(url_shin+urlPala);	
+				document.write("\" style=\"color:white; text-decoration: none;\">");
+			
+		-->	
+			</script>
+					
+			2</a></font>
+		</td>
+		
+		
+		<td style="background-color: black;"><font color=#fff>
+			<script type="text/javascript">
+//-------------------------------2新三田駅--------------------------------------------------
+				<!--
+					flg=0;
+
+					if(weekday==0){//休日の場合
+						for(i=0;i<shinHol.length;i++){
+							if(nowTime<shinHol[i]){
+								document.write( "先発　" );
+								document.write( Math.floor(shinHol[i]/100)+':');
+								if(shinHol[i]%100<10)document.write(0);
+								document.write(shinHol[i]%100 );
+								if(shinAHol[i]==1)document.write("　<font color=red>臨時Link</font> 新三田駅直行<br>");
+								else document.write("　<font size=2>ｾﾝﾁｭﾘーﾌﾟﾗｻﾞ</font> 新三田駅<br>");
+									if(i+1<shinHol.length){
+										document.write( "次発　" );
+										document.write( Math.floor(shinHol[i+1]/100)+':');
+										if(shinHol[i+1]%100<10)document.write(0);
+										document.write(shinHol[i+1]%100 );
+										if(shinAHol[i+1]==1)document.write("　<font color=red>臨時Link</font> 新三田駅直行<br>");
+										else document.write("　<font size=2>ｾﾝﾁｭﾘーﾌﾟﾗｻﾞ</font> 新三田駅<br>");
+									}
+									else document.write("-");
+								flg=1; 
+								break;
+							}
+						}
+					}
+
+					else if(kyu==1){//平日で休講日ダイヤの場合
+						for(i=0;i<shinKyu.length;i++){
+							if(nowTime<shinKyu[i]){
+								document.write( "先発　" );
+								document.write( Math.floor(shinKyu[i]/100)+':');
+								if(shinKyu[i]%100<10)document.write(0);
+								document.write(shinKyu[i]%100 );
+								if(shinAKyu[i]==0)document.write("　<font size=2>ｾﾝﾁｭﾘーﾌﾟﾗｻﾞ</font> 新三田駅<br>");
+								if(shinAKyu[i]==1)document.write("　<font size=2>南WT駅</font> 新三田駅<br>");
+									if(i+1<shinKyu.length){
+										document.write( "次発　" );
+										document.write( Math.floor(shinKyu[i+1]/100)+':');
+										if(shinKyu[i+1]%100<10)document.write(0);
+										document.write(shinKyu[i+1]%100 );
+										if(shinAKyu[i+1]==0)document.write("　<font size=2>ｾﾝﾁｭﾘーﾌﾟﾗｻﾞ</font> 新三田駅<br>");
+										if(shinAKyu[i+1]==1)document.write("　<font size=2>南WT駅</font> 新三田駅<br>");
+									}
+									else document.write("-");
+								flg=1; 
+								break;
+							}
+						}
+					}
+
+					else{//平日で授業日の場合
+						for(i=0;i<shin.length;i++){
+							if(nowTime<shin[i]){
+								document.write( "先発　" );
+								document.write( Math.floor(shin[i]/100)+':');
+								if(shin[i]%100<10)document.write(0);
+								document.write(shin[i]%100 );
+								if(shinA[i]==0)document.write("　<font size=2>ｾﾝﾁｭﾘーﾌﾟﾗｻﾞ</font> 新三田駅<br>");
+								if(shinA[i]==1)document.write("　<font size=2>南WT駅</font> 新三田駅<br>");
+								if(shinA[i]==2)document.write("　<font size=2 color=#f50>連節 KG Link</font> 新三田駅直行<br>");
+								if(shinA[i]==3)document.write("　<font color=#f50>KG Link</font> 新三田駅直行<br>");
+									if(i+1<shin.length){
+										document.write( "次発　" );
+										document.write( Math.floor(shin[i+1]/100)+':');
+										if(shin[i+1]%100<10)document.write(0);
+										document.write(shin[i+1]%100 );
+										if(shinA[i+1]==0)document.write("　<font size=2>ｾﾝﾁｭﾘーﾌﾟﾗｻﾞ</font> 新三田駅<br>");
+										if(shinA[i+1]==1)document.write("　<font size=2>南WT駅</font> 新三田駅<br>");
+										if(shinA[i+1]==2)document.write("　<font size=2 color=#f50>連節 KG Link</font> 新三田駅直行<br>");
+										if(shinA[i+1]==3)document.write("　<font color=#f50>KG Link</font> 新三田駅直行<br>");
+									}
+									else document.write("-");
+								flg=1; 
+								break;
+							}
+						}
+					}
+				if(flg==0)document.write( "<font size=2>新三田</font><font size=1>駅行き、本日の運行は終了しました。</font>" );
+//-------------------------新三田ここまで----------------------------------------------------------------
+// -->
+			</script>
+			</font>
+		</td>
+	</tr>
+
+
+
+
+	
+	
+	<tr>
+		<td style="background-color: #07f;" width=10>
+			<font size=5 color=white>
+			<script type="text/javascript">
+		<!--	
+				document.write("<a href=\"");
+				url_sanda="http://time.jr-odekake.net/cgi-bin/mydia.cgi?MODE=11&FUNC=0&EKI=%E4%B8%89%E7%94%B0&SENK=%EF%BC%AA%EF%BC%B2%E5%AE%9D%E5%A1%9A%E7%B7%9A&DIR=%E5%AE%9D%E5%A1%9A%E3%83%BB%E5%A4%A7%E9%98%AA%E3%83%BB%E5%8C%97%E6%96%B0%E5%9C%B0%E6%96%B9%E9%9D%A2&DDIV=&CDAY=&DITD=2830025040100%2c2830025040110%2c2830025040400%2c2830025040410&COMPANY_CODE=4&DATE=";
+				document.write(url_sanda+urlPala);	
+				document.write("\" style=\"color:white; text-decoration: none;\">");
+			
+		-->	
+			</script>
+			3</a></font>
+		</td>
+		<td style="background-color: black;"><font color=#fff>
+			<script type="text/javascript">
+//-----------------------------------3三田駅---------------------------------------------------------
+				<!--
+				flg=0;
+				if(weekday==0){//休日の場合
+					for(i=0;i<sandaHol.length;i++){
+						if(nowTime<sandaHol[i]){
+							document.write( "先発　" );
+							document.write( Math.floor(sandaHol[i]/100)+':');
+							if(sandaHol[i]%100<10)document.write(0);
+							document.write(sandaHol[i]%100 );
+							if(sandaAHol[i]==0)document.write("<font color=red>　臨時</font>");
+								document.write("　<font size=2>市立図書館前</font> 三田駅<br>");
+									if(i+1<sandaHol.length){
+										document.write( "次発　" );
+										document.write( Math.floor(sandaHol[i+1]/100)+':');
+										if(sandaHol[i+1]%100<10)document.write(0);
+										document.write(sandaHol[i+1]%100 );
+									if(sandaAHol[i+1]==0)document.write("<font color=red>　臨時</font>");
+										document.write("　<font size=2>市立図書館前</font> 三田駅<br>");
+									}
+								else document.write("-");
+							flg=1; 
+							break;
+						}
+					}
+				}
+
+				else if(kyu==1){//平日で休講日ダイヤの場合
+					for(i=0;i<sandaKyu.length;i++){
+						if(nowTime<sandaKyu[i]){
+							document.write( "先発　" );
+							document.write( Math.floor(sandaKyu[i]/100)+':');
+							if(sandaKyu[i]%100<10)document.write(0);
+							document.write(sandaKyu[i]%100 );
+								if(sandaAKyu[i]==0)document.write("　<font size=2>市立図書館前</font> 三田駅<br>");
+								if(sandaAKyu[i]==1)document.write("　<font color=#f50>連節</font> <font size=2>市立図書館前</font> 三田駅<br>");
+								if(sandaAKyu[i]==2)document.write("　<font size=2>ﾌﾗﾜｰﾀｳﾝ</font> 富士が丘6丁目<br>");
+								if(sandaAKyu[i]==3)document.write("　<font size=2>ﾌﾗﾜｰﾀｳﾝ</font> 三田駅<br>");
+								if(i+1<sandaKyu.length){
+									document.write( "次発　" );
+									document.write( Math.floor(sandaKyu[i+1]/100)+':');
+									if(sandaKyu[i+1]%100<10)document.write(0);
+									document.write(sandaKyu[i+1]%100 );
+									if(sandaAKyu[i+1]==0)document.write("　<font size=2>市立図書館前</font> 三田駅<br>");
+									if(sandaAKyu[i+1]==1)document.write("　<font color=#f50>連節</font> <font size=2>市立図書館前</font> 三田駅<br>");
+									if(sandaAKyu[i+1]==2)document.write("　<font size=2>ﾌﾗﾜｰﾀｳﾝ</font> 富士が丘6丁目<br>");
+									if(sandaAKyu[i+1]==3)document.write("　<font size=2>ﾌﾗﾜｰﾀｳﾝ</font> 三田駅<br>");
+								}
+								else document.write("-");
+							flg=1; 
+							break;
+						}
+					}
+				}
+				else{//平日で授業日の場合
+					for(i=0;i<sanda.length;i++){
+						if(nowTime<sanda[i]){
+							document.write( "先発　" );
+							document.write( Math.floor(sanda[i]/100)+':');
+							if(sanda[i]%100<10)document.write(0);
+							document.write(sanda[i]%100 );
+								if(sandaA[i]==0)document.write("　<font size=2>市立図書館前</font> 三田駅<br>");
+								if(sandaA[i]==1)document.write("　<font color=#f50>連節</font> <font size=2>市立図書館前</font> 三田駅<br>");
+								if(sandaA[i]==2)document.write("　<font size=2>ﾌﾗﾜｰﾀｳﾝ</font> 富士が丘6丁目<br>");
+								if(sandaA[i]==3)document.write("　<font size=2>ﾌﾗﾜｰﾀｳﾝ</font> 三田駅<br>");
+								if(i+1<sanda.length){
+									document.write( "次発　" );
+									document.write( Math.floor(sanda[i+1]/100)+':');
+									if(sanda[i+1]%100<10)document.write(0);
+									document.write(sanda[i+1]%100 );
+									if(sandaA[i+1]==0)document.write("　<font size=2>市立図書館前</font> 三田駅<br>");
+									if(sandaA[i+1]==1)document.write("　<font color=#f50>連節</font> <font size=2>市立図書館前</font> 三田駅<br>");
+									if(sandaA[i+1]==2)document.write("　<font size=2>ﾌﾗﾜｰﾀｳﾝ</font> 富士が丘6丁目<br>");
+									if(sandaA[i+1]==3)document.write("　<font size=2>ﾌﾗﾜｰﾀｳﾝ</font> 三田駅<br>");
+								}
+								else document.write("-");
+							flg=1;
+							break;
+						}
+					}
+				}
+
+				if(flg==0)document.write( "<font size=2>三田駅</font><font size=1>方面行き、本日の運行は終了しました。</font>" );
+//------------------------------三田駅ここまで-----------------------------------------------------------
+// -->
+			</script>
+			</font>
+		</td>
+	</tr>
+
+
+
+
+
+	<tr>
+		<td style="background-color: #0a0;" width=10>
+			<font size=5 color=white>4</font>
+		</td>
+		<td style="background-color: black;"><font color=#fff>
+			<script type="text/javascript">
+//--------------------------------4つつじヶ丘北口方面---------------------------------------------------------
+				<!--
+				flg=0;
+				if(weekday==0){//休日の場合
+					for(i=0;i<tsutsujiHol.length;i++){
+						if(nowTime<tsutsujiHol[i]){
+							document.write( "先発　" );
+							document.write( Math.floor(tsutsujiHol[i]/100)+':');
+							if(tsutsujiHol[i]%100<10)document.write(0);
+							document.write(tsutsujiHol[i]%100 );
+								document.write("　<font size=2>相野駅</font> つつじヶ丘北口<br>");
+									if(i+1<tsutsujiHol.length){
+										document.write( "次発　" );
+										document.write( Math.floor(tsutsujiHol[i+1]/100)+':');
+										if(tsutsujiHol[i+1]%100<10)document.write(0);
+										document.write(tsutsujiHol[i+1]%100 );
+										document.write("　<font size=2>相野駅</font> つつじヶ丘北口<br>");
+									}
+								else document.write("-");
+							flg=1; 
+							break;
+						}
+					}
+				}
+
+
+				else{//平日の場合
+					for(i=0;i<tsutsuji.length;i++){
+						if(nowTime<tsutsuji[i]){
+							document.write( "先発　" );
+							document.write( Math.floor(tsutsuji[i]/100)+':');
+							if(tsutsuji[i]%100<10)document.write(0);
+							document.write(tsutsuji[i]%100 );
+								if(tsutsujiA[i]==0)document.write("　<font size=2>相野駅</font> つつじヶ丘北口<br>");
+								if(tsutsujiA[i]==1)document.write("　<font size=2>相野駅 つつじヶ丘北口</font> 大川瀬大滝<br>");
+								if(tsutsujiA[i]==2)document.write("　<font size=2 color=#f50>KG Amuse Line</font>ｲｵﾝﾓｰﾙ・ｱｳﾄﾚｯﾄ<br>");
+								if(i+1<tsutsuji.length){
+									document.write( "次発　" );
+									document.write( Math.floor(tsutsuji[i+1]/100)+':');
+									if(tsutsuji[i+1]%100<10)document.write(0);
+									document.write(tsutsuji[i+1]%100 );
+									if(tsutsujiA[i+1]==0)document.write("　<font size=2>相野駅</font> つつじヶ丘北口<br>");
+									if(tsutsujiA[i+1]==1)document.write("　<font size=2>相野駅 つつじヶ丘北口</font> 大川瀬大滝<br>");
+									if(tsutsujiA[i+1]==2)document.write("　<font size=2 color=#f50>KG Amuse Line</font>ｲｵﾝﾓｰﾙ・ｱｳﾄﾚｯﾄ<br>");
+				
+								}
+								else document.write("-");
+							flg=1;
+							break;
+						}
+					}
+				}
+				
+				if(flg==0)document.write( "<font size=2>つつじヶ丘北口</font><font size=1>方面行き、本日の運行は終了しました。</font>" );
+//--------------------------------つつじここまで---------------------------------------------------------
+// -->
+			</script>
+			</font>
+		</td>
+	</tr>
+
+
+
+	<tr>
+		<td style="background-color: #f50;" width=10>
+			<font size=5 color=white>5</font>
+		</td>
+		<td style="background-color: black;"><font color=#fff>
+			<script type="text/javascript">
+//-------------------------------------5シャトルバス---------------------------------------------------------
+				<!--
+				flg=0;
+				if(weekday==1&&kyu==0||today==1123||today==1223){//{平日(かつ)授業日}(または){祝日授業実施日}の場合
+					for(i=0;i<shuttle.length;i++){
+						if(nowTime<shuttle[i]){
+							document.write( "先発　" );
+							document.write( Math.floor(shuttle[i]/100)+':');
+							if(shuttle[i]%100<10)document.write(0);
+							document.write(shuttle[i]%100 );
+								document.write("　<font size=2>上ヶ原ｷｬﾝﾊﾟｽ直行</font>シャトルバス<br>");
+									if(i+1<shuttle.length){
+										document.write( "次発　" );
+										document.write( Math.floor(shuttle[i+1]/100)+':');
+										if(shuttle[i+1]%100<10)document.write(0);
+										document.write(shuttle[i+1]%100 );
+										document.write("　<font size=2>上ヶ原ｷｬﾝﾊﾟｽ直行</font>シャトルバス<br>");
+									}
+								else document.write("-");
+							flg=1; 
+							break;
+						}
+					}
+				}
+
+				else{ document.write( "<font size=1>上ヶ原キャンパス行き、本日の運行はありません。</font>" );
+						flg=1;
+				}//運休日の場合
+//多分解決した
+				if(flg==0) document.write( "<font size=2>上ヶ原ｷｬﾝﾊﾟｽ</font><font size=1>行き、本日の運行は終了しました。</font>" );
+//-------------------------シャトルバスここまで----------------------------------------------------------------
+// -->
+			</script>
+			</font>
+		</td>
+	</tr>
+</table>
+<!-- 時刻表示本体終了 -->
+
+
+<p>
+<!--
+	<font size=2 color=red>※</font><font size=1>ロータリー発以外(学園3丁目,関西学院前停留所から)のバスは表示していません<br></font>
+	<font size=1>関西学院神戸三田キャンパス発2015年10月1日改正<br>
+		</font><br>
+-->
+
+<a href="another-kwangaku.html"><img src=image/kwansei-link.png></a>
+<a href="another-gakuen.html"><img src=image/gakuen-link.png></a><br>
+
+	<font size=1>本サービスにおいて発生した、直接的あるいは間接的損害について、一切の責任を負いかねます。あらかじめご了承ください。</font>
+</p>
+
+
+<a href="http://karakuri-do.sakura.ne.jp/"><img src="logo.png" alt="機巧堂" width="200"></a><br>
+
+<font size=1>このページに関するお問い合わせ、時刻の間違いなど連絡はこちらまで</font><br>
+tokky.info@gmail.com<br></p>
+
+<font size=1>
+<p>最終更新日:2016年1月1日 バージョン1.9.1
+　copyright&copy; 2014-2016 tokky</p></font>
+
+<!-- FC2カウンター ここから -->
+<script language="javascript" type="text/javascript" src="http://counter1.fc2.com/counter.php?id=89344429"></script><noscript><img src="http://counter1.fc2.com/counter_img.php?id=89344429" /></noscript>
+<!-- FC2カウンター ここまで -->
+
+</center>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-48327547-1', 'sakura.ne.jp');
+  ga('send', 'pageview');
+
+</script>
+
+
+<noscript>
+<p>このページではJavaScriptを使用しています。JavaScriptを有効にしてください。</p>
+</noscript>
+
+
+</body>
+
+</html>
