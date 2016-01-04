@@ -1,4 +1,4 @@
-#Exodus KSC<img src="http://karakuri-do.sakura.ne.jp/tokky/icon-bus.png" width="100">
+#<img src="http://karakuri-do.sakura.ne.jp/tokky/icon-bus.png" width="50">Exodus KSC
 
 ##概要
 関西学院大学神戸三田キャンパス周辺の3停留所から出発するバスの発車時刻・行き先をリアルタイムに表示するサービスです。
